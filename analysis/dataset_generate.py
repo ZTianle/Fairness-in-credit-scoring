@@ -101,6 +101,8 @@ df_final = df_new[['outcome','risk','q126','q144','q7q8','q9','q11','q11a','q12'
 'q84_1','q84_2','q84_3','q84_4','q84_5','q84_6','q84_7','q84_8','q84_9','q84_10','q84_11','q84_12','q84_13','q84_14','q84_15','q84_16','q84_17','q84_18',
 'q85','q103106','q111112','q113','qbb2','qbb3','q115','q116_p','q116_l','q117','q119','q120']]
 
+# save the dataframe as a csv file
+df_final.to_csv('./sme_finance_monitor_preprocess.csv')
 
 #those variables without missing values 
 df_final = pandas.get_dummies(df_final, columns=['risk'])
