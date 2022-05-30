@@ -249,10 +249,10 @@ if __name__=="__main__":
     # first create a transformed training set through our WoE_Binning custom class
     X_train_woe_transformed = woe_transform.fit_transform(X_train)
     # Store the column names in X_train as a list
-    feature_name = X_train_woe_transformed.columns.values
+    # feature_name = X_train_woe_transformed.columns.values
 
     # Create a summary table of our logistic regression model
-    summary_table = pandas.DataFrame(columns = ['Feature name'], data = feature_name)
+    # summary_table = pandas.DataFrame(columns = ['Feature name'], data = feature_name)
     # # Create a new column in the dataframe, called 'Coefficients'
     # summary_table['Coefficients'] = numpy.transpose(pipeline['model'].coef_)
     # # Increase the index of every row of the dataframe with 1 to store our model intercept in 1st row
@@ -260,7 +260,7 @@ if __name__=="__main__":
     # # Assign our model intercept to this new row
     # summary_table.loc[0] = ['Intercept', pipeline['model'].intercept_[0]]
     # Sort the dataframe by index
-    summary_table.sort_index(inplace = True)
+    # summary_table.sort_index(inplace = True)
 
     y_pred = pipeline.predict(X_test)
     RocCurveDisplay.from_predictions(y_test, y_pred)
