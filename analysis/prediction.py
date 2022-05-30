@@ -1,3 +1,4 @@
+from cmath import nan
 from unicodedata import category
 import scipy, pandas, numpy
 import matplotlib.pyplot as plt  
@@ -7,9 +8,12 @@ from scipy.stats import chi2_contingency
 import seaborn as sns
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.linear_model import LogisticRegression, LinearRegression, Lasso,  ElasticNetCV
+from sklearn.neural_network import MLPClassifier
+from sklearn.svm import LinearSVC, SVC
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import roc_curve, roc_auc_score, precision_recall_curve, RocCurveDisplay
+from sklearn.impute import KNNImputer, SimpleImputer
 
 category_notuseful = ['q11a', 'q15z', 'q85']
 
@@ -22,12 +26,20 @@ class WoE_Binning(BaseEstimator, TransformerMixin):
     def transform(self, X):
         return X
     def preprocess(self, X):
+        # 1-white, 2-mixed, 3-asian, 4-black, missing
+        X['q144_new']=nan
+        X.loc[(X['q144']==1)|(X['q144']==2)|(X['q144']==3),'q144_new'] = 1
+        X.loc[(X['q144']==4)|(X['q144']==5)|(X['q144']==6)|(X['q144']==7),'q144_new'] = 2
+        X.loc[(X['q144']==8)|(X['q144']==9)|(X['q144']==10)|(X['q144']==11)|(X['q144']==15),'q144_new'] = 3
+        X.loc[(X['q144']==12)|(X['q144']==13)|(X['q144']==14),'q144_new'] = 4
+        X.drop(['q144'], axis=1, inplace=True)
+
         #those variables without missing values 
         X = pandas.get_dummies(X, columns=['risk'])
 
         X = pandas.get_dummies(X, columns=['q126'])
 
-        X = pandas.get_dummies(X, columns=['q144'])
+        # X = pandas.get_dummies(X, columns=['q144'])
 
         X = pandas.get_dummies(X, columns=['q7q8'])
 
@@ -177,14 +189,29 @@ if __name__=="__main__":
     woe_transform = WoE_Binning(df)
 
     X = woe_transform.preprocess(df)
-
-    X = df.drop(['outcome'], axis=1)
     
-    y = df['outcome']
+    y = X['outcome']
 
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size = 0.2, 
+    X = X.drop(['outcome'], axis=1)
+    
+
+    # print(X['q144_new'].value_counts())
+
+     # KNN imputer
+    imputer = SimpleImputer(strategy="most_frequent")
+    # imputer = KNNImputer(n_neighbors=2, weights="uniform")
+    X_new = imputer.fit_transform(X, y)
+    print(X['q144_new'])
+    print(X_new[:,-1])
+    # X = pandas.get_dummies(X, columns=['q144_new'])
+
+    # X = SimpleImputer(strategy="most_frequent")
+
+    # mask = numpy.random.randint(0, 2, size=X['126'].shape).astype(bool)
+    # print(mask)
+    X_train, X_test, y_train, y_test = train_test_split(X_new, y, test_size = 0.2, 
                                                         random_state = 42, stratify = y)
-
+ 
      # hard copy the X datasets to avoid Pandas' SetttingWithCopyWarning when we play around with this data later on.
     # this is currently an open issue between Pandas and Scikit-Learn teams
     X_train, X_test = X_train.copy(), X_test.copy()
@@ -194,6 +221,8 @@ if __name__=="__main__":
     # reg = RandomForestClassifier(n_estimators=100, max_depth=10, random_state=0, class_weight='balanced')
     # reg = LinearRegression()
     reg = Lasso(alpha=0.05)
+    # reg = clf = MLPClassifier(activation='logistic', solver='adam', alpha=1e-5, hidden_layer_sizes=(500,), random_state=1)
+
     # reg =  ElasticNetCV(cv=5, random_state=0)
 
     pipeline = Pipeline(steps=[('woe', woe_transform), ('model', reg)])
@@ -203,6 +232,7 @@ if __name__=="__main__":
 
     # fit and evaluate the regression pipeline with cross-validation as defined in cv
     scores = cross_val_score(pipeline, X_train, y_train, scoring = 'roc_auc', cv = cv)
+    
     
     AUROC = numpy.mean(scores)
     
