@@ -10,10 +10,12 @@ from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.linear_model import LogisticRegression, LinearRegression, Lasso,  ElasticNetCV
 from sklearn.neural_network import MLPClassifier
 from sklearn.svm import LinearSVC, SVC
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
 from sklearn.pipeline import Pipeline
 from sklearn.metrics import roc_curve, roc_auc_score, precision_recall_curve, RocCurveDisplay
 from sklearn.impute import KNNImputer, SimpleImputer
+from sklearn.experimental import enable_iterative_imputer
+from sklearn.impute import IterativeImputer
 
 category_notuseful = ['q11a', 'q15z', 'q85']
 
@@ -195,11 +197,12 @@ if __name__=="__main__":
     X = X.drop(['outcome'], axis=1)
     
 
-    # print(X['q144_new'].value_counts())
+    print(X['q144_new'].value_counts())
 
      # KNN imputer
-    imputer = SimpleImputer(strategy="most_frequent")
-    # imputer = KNNImputer(n_neighbors=2, weights="uniform")
+    # imputer = SimpleImputer(strategy="most_frequent")
+    imputer = IterativeImputer(IterativeImputer(estimator=RandomForestRegressor(random_state=0), max_iter=20))
+    # imputer = KNNImputer(n_neighbors=5, weights="uniform")
     X_new = imputer.fit_transform(X, y)
     print(X['q144_new'])
     print(X_new[:,-1])
