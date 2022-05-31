@@ -201,7 +201,8 @@ if __name__=="__main__":
 
      # KNN imputer
     # imputer = SimpleImputer(strategy="most_frequent")
-    imputer = IterativeImputer(IterativeImputer(estimator=RandomForestRegressor(random_state=0), max_iter=20))
+    imputer = SimpleImputer(strategy="constant", fill_value=0)
+    # imputer = IterativeImputer(IterativeImputer(estimator=RandomForestRegressor(random_state=0), max_iter=5))
     # imputer = KNNImputer(n_neighbors=5, weights="uniform")
     X_new = imputer.fit_transform(X, y)
     print(X['q144_new'])
@@ -252,18 +253,21 @@ if __name__=="__main__":
     # first create a transformed training set through our WoE_Binning custom class
     X_train_woe_transformed = woe_transform.fit_transform(X_train)
     # Store the column names in X_train as a list
-    # feature_name = X_train_woe_transformed.columns.values
+    feature_name = X.columns.values
 
     # Create a summary table of our logistic regression model
-    # summary_table = pandas.DataFrame(columns = ['Feature name'], data = feature_name)
+    summary_table = pandas.DataFrame(columns = ['Feature name'], data = feature_name)
     # # Create a new column in the dataframe, called 'Coefficients'
-    # summary_table['Coefficients'] = numpy.transpose(pipeline['model'].coef_)
+    summary_table['Coefficients'] = numpy.transpose(pipeline['model'].coef_)
     # # Increase the index of every row of the dataframe with 1 to store our model intercept in 1st row
-    # summary_table.index = summary_table.index + 1
+    summary_table.index = summary_table.index + 1
     # # Assign our model intercept to this new row
     # summary_table.loc[0] = ['Intercept', pipeline['model'].intercept_[0]]
     # Sort the dataframe by index
-    # summary_table.sort_index(inplace = True)
+    summary_table.sort_index(inplace = True)
+
+    print(summary_table)
+    summary_table.to_csv('./coef.xls', index=False)
 
     y_pred = pipeline.predict(X_test)
     RocCurveDisplay.from_predictions(y_test, y_pred)
