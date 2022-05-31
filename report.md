@@ -38,23 +38,23 @@ Firstly, we completed some data cleaning tasks on both the training and test set
 
 Interestingly, Fig. 1 shows the final outcome for the owners' gender. As we can see, female owners have a more chance of securing a financial product, while male owners would be more pessimistic about their main bank treating them fairly.
 
-![gender](/home/tianle/Fairness/analysis/fig/gender.jpg)
+![gender](./fig/gender.jpg)
 
 <center>Fig. 1. The final outcome with respect to the gender of the owner of the business.</center>
 
-![gender_trust](/home/tianle/Fairness/analysis/fig/gender_trust.jpg)
+![gender_trust](./fig/gender_trust.jpg)
 
 <center>Fig. 2. To what extend, trust the MAIN BANK to treat them fairly.</center>
 
 On the other hand, when considering the ethnic background, we divide the background category into five classes, i.e., white background, Asian background, black background, and mixed background. Loan applications with a black background have the highest probability of default, while businesses with white backgrounds are the most likely to successfully secure the financial products in Fig. 3. Besides, the other backgrounds have an equal chance of loans. Similarly, the owners with the black background gave the least score on the treatment of their MAIN BANK in Fig. 4.
 
-![ethnic](/home/tianle/Fairness/analysis/fig/ethnic.jpg)
+![ethnic](./fig/ethnic.jpg)
 
 <center>Fig. 3. The final outcome with respect to the ethnic background of the owner of the business.</center>
 
 
 
-![ethnic](/home/tianle/Fairness/analysis/fig/ethnic_trust.jpg)
+![ethnic](./fig/ethnic_trust.jpg)
 
 <center>Fig. 4. To what extend, trust the MAIN BANK to treat them fairly.</center>
 
