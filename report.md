@@ -105,9 +105,6 @@ Next, we will consider the effects of different imputation algorithms on the cla
 
 
 
-1.扩大数据集
+1.基本的想法 扩大数据集 （数据比较少， ethic比较少，单独考虑第三方risk评估）再对比一下是否fairness
 
 2.讨论imputation 方法对这个的影响）
-
-
-

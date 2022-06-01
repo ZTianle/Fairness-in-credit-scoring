@@ -1,6 +1,19 @@
 import scipy, pandas, numpy
 import matplotlib.pyplot as plt  
 
+def multichoice(df, col_key):
+    df_copy  = df.copy()
+    col=[]
+    if isinstance(col_key,list):
+        for i in col_key:
+            col += df.filter(like=i).columns.tolist()
+        # print(col)
+    else:
+        col = df.filter(like=col_key).columns.tolist()
+    df[col] = df_copy[col].replace(-99.99, 0.00,inplace=False)
+    df.loc[(df[col]==0.00).all(axis=1), col] = numpy.nan
+    return df
+
 df = pandas.read_csv('sme_finance_monitor_q2_2018-q3_2020v2.csv')
 
 """Process the outcome of data"""
@@ -101,99 +114,18 @@ df_final = df_new[['outcome','risk','q126','q144','q7q8','q9','q11','q11a','q12'
 'q84_1','q84_2','q84_3','q84_4','q84_5','q84_6','q84_7','q84_8','q84_9','q84_10','q84_11','q84_12','q84_13','q84_14','q84_15','q84_16','q84_17','q84_18',
 'q85','q103106','q111112','q113','qbb2','qbb3','q115','q116_p','q116_l','q117','q119','q120']]
 
+
 # save the dataframe as a csv file
-df_final.to_csv('./sme_finance_monitor_preprocess.csv')
+# df_final.to_csv('./sme_finance_monitor_preprocess.csv')
 
-#those variables without missing values 
-df_final = pandas.get_dummies(df_final, columns=['risk'])
+#####   drop some variables
+drop_list=['q36', 'q54']
 
-df_final = pandas.get_dummies(df_final, columns=['q126'])
+for i in drop_list:
+    col = df_final.filter(like=i).columns.tolist()
+    df_final.drop(col,axis=1,inplace=True)
 
-df_final = pandas.get_dummies(df_final, columns=['q144'])
-
-df_final = pandas.get_dummies(df_final, columns=['q7q8'])
-
-df_final = pandas.get_dummies(df_final, columns=['q9'])
-
-df_final = pandas.get_dummies(df_final, columns=['q11'])
-
-df_final = pandas.get_dummies(df_final, columns=['q12'])
-
-df_final = pandas.get_dummies(df_final, columns=['q13'])
-
-df_final = pandas.get_dummies(df_final, columns=['q14y'])
-
-df_final = pandas.get_dummies(df_final, columns=['q14ysu2'])
-
-df_final = pandas.get_dummies(df_final, columns=['q15d2'])
-
-df_final = pandas.get_dummies(df_final, columns=['q15z'])
-
-df_final = pandas.get_dummies(df_final, columns=['q24a'])
-
-df_final = pandas.get_dummies(df_final, columns=['q24b'])
-
-df_final = pandas.get_dummies(df_final, columns=['q24c'])
-
-df_final = pandas.get_dummies(df_final, columns=['q78'])
-
-df_final = pandas.get_dummies(df_final, columns=['q103106'])
-
-df_final = pandas.get_dummies(df_final, columns=['q120'])
-
-
-#those variables with missing values but handled 
-df_final = df_final.drop(df_final[df_final['q15_1'] == -99.99].index)
-df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q15_').columns.tolist())
-
-df_temp  = df_final.copy()
-cols = df_temp.filter(like='q35b').columns.tolist()+df_temp.filter(like='q53').columns.tolist()
-df_final[cols] = df_temp[cols].replace(-99.99,0.00,inplace=False)
-
-#those variables with missing values but not handled 
-df_final = pandas.get_dummies(df_final, columns=['q11a'])
-
-df_final = pandas.get_dummies(df_final, columns=['q13a'])
-
-df_final = pandas.get_dummies(df_final, columns=['q13b'])
-
-df_final = pandas.get_dummies(df_final, columns=['q14a'])
-
-df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q15b_').columns.tolist())
-
-df_final = pandas.get_dummies(df_final, columns=['q15c'])
-
-df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q17_').columns.tolist())
-
-df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q26_').columns.tolist())
-
-df_final = pandas.get_dummies(df_final, columns=['q27'])
-
-df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q28_').columns.tolist())
-
-df_temp  = df_final.copy()
-cols = df_temp.filter(like='q38').columns.tolist()+df_temp.filter(like='q56').columns.tolist()
-df_final[cols] = df_temp[cols].replace([-99.99, 3.00],0.00,inplace=False)
-
-df_final['q38_56'] = -99.99
-for i in cols:
-    df_final.loc[df_final[i] == 1.00,'q38_56'] = 1.00
-    df_final.loc[df_final[i] == 2.00,'q38_56'] = 2.00
-    df_final.drop(i,axis=1,inplace=True)
-
-df_final = pandas.get_dummies(df_final, columns=['q38_56'])
-
-df_temp  = df_final.copy()
-cols = df_temp.filter(like='q42').columns.tolist()+df_temp.filter(like='q60').columns.tolist()
-df_final[cols] = df_temp[cols].replace([-99.99, 3.00],0.00,inplace=False)
-
-df_final['q42_60'] = -99.99
-for i in cols:
-    df_final.loc[df_final[i] == 1.00,'q42_60'] = 1.00
-    df_final.loc[df_final[i] == 2.00,'q42_60'] = 2.00
-    df_final.drop(i,axis=1,inplace=True)
-
-df_final = pandas.get_dummies(df_final, columns=['q42_60'])
+#####   merge variables
 
 df_temp  = df_final.copy()
 cols = df_temp.filter(like='q43').columns.tolist()+df_temp.filter(like='q61').columns.tolist()
@@ -205,23 +137,6 @@ for i in cols:
     df_final.loc[df_final[i] == 2.00,'q43_61'] = 2.00
     df_final.drop(i,axis=1,inplace=True)
 
-df_final = pandas.get_dummies(df_final, columns=['q43_61'])
-
-df_final = pandas.get_dummies(df_final, columns=['q78b'])
-
-df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q78c').columns.tolist())
-
-df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q81').columns.tolist())
-
-df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q84_').columns.tolist())
-
-df_final = pandas.get_dummies(df_final, columns=['q85'])
-
-df_final = pandas.get_dummies(df_final, columns=['q111112'])
-
-df_final = pandas.get_dummies(df_final, columns=['q113'])
-
-df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='qbb').columns.tolist())
 
 df_final['q115_116']  = -99.99
 df_final.loc[df_final['q115'] == 3.00,'q115_116'] = 0.00
@@ -236,11 +151,158 @@ df_final.loc[df_final['q116_l'] == 3.00,'q115_116'] = -3.00
 df_final.loc[df_final['q116_l'] == 4.00,'q115_116'] = -4.00
 df_final.loc[df_final['q116_l'] == 5.00,'q115_116'] = -5.00
 
-df_final = pandas.get_dummies(df_final, columns=['q115_116'])
+cols = df_final.filter(like='q115').columns.tolist()+df_final.filter(like='q116').columns.tolist()
+df_final.drop(cols,axis=1,inplace=True)
+#####   variables without missing values
+nomiss_list=['risk', 'q126', 'q144', 'q7q8', 'q9', 'q11', 'q12', 'q13', 'q14y', 
+'q14ysu2', 'q15d2', 'q15', 'q15z', 'q24a', 'q24b', 'q24c', 'q78', 'q103106', 'q120']
 
-df_final = pandas.get_dummies(df_final, columns=['q117'])
+#####   variables with missing values
+col_list=['q13b', 'q14a', 'q15_', ['q35b', 'q53'], 'q11a', 'q13a', 'q15b_', 'q15c', 'q17_', 'q26_', 'q27', 
+'q28_', ['q38', 'q56'], ['q42', 'q60'], 'q43_61', 'q78b', 'q78c', 'q81', 'q84_', 'q85', 'q111112',
+'q113', 'qbb', 'q115_116', 'q117', 'q119']
 
-df_final = pandas.get_dummies(df_final, columns=['q119'])
+for i in col_list:
+    df_final = multichoice(df_final,i)
+
+df_final.to_csv('./sme_finance_monitor_preprocess.csv')
+# #those variables without missing values 
+# df_final = pandas.get_dummies(df_final, columns=['risk'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q126'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q144'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q7q8'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q9'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q11'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q12'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q13'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q14y'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q14ysu2'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q15d2'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q15z'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q24a'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q24b'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q24c'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q78'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q103106'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q120'])
+
+
+# #those variables with missing values but handled 
+# df_final = df_final.drop(df_final[df_final['q15_1'] == -99.99].index)
+# df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q15_').columns.tolist())
+
+# df_temp  = df_final.copy()
+# cols = df_temp.filter(like='q35b').columns.tolist()+df_temp.filter(like='q53').columns.tolist()
+# df_final[cols] = df_temp[cols].replace(-99.99,0.00,inplace=False)
+
+# #those variables with missing values but not handled 
+# df_final = pandas.get_dummies(df_final, columns=['q11a'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q13a'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q13b'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q14a'])
+
+# df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q15b_').columns.tolist())
+
+# df_final = pandas.get_dummies(df_final, columns=['q15c'])
+
+# df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q17_').columns.tolist())
+
+# df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q26_').columns.tolist())
+
+# df_final = pandas.get_dummies(df_final, columns=['q27'])
+
+# df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q28_').columns.tolist())
+
+# df_temp  = df_final.copy()
+# cols = df_temp.filter(like='q38').columns.tolist()+df_temp.filter(like='q56').columns.tolist()
+# df_final[cols] = df_temp[cols].replace([-99.99, 3.00],0.00,inplace=False)
+
+# df_final['q38_56'] = -99.99
+# for i in cols:
+#     df_final.loc[df_final[i] == 1.00,'q38_56'] = 1.00
+#     df_final.loc[df_final[i] == 2.00,'q38_56'] = 2.00
+#     df_final.drop(i,axis=1,inplace=True)
+
+# df_final = pandas.get_dummies(df_final, columns=['q38_56'])
+
+# df_temp  = df_final.copy()
+# cols = df_temp.filter(like='q42').columns.tolist()+df_temp.filter(like='q60').columns.tolist()
+# df_final[cols] = df_temp[cols].replace([-99.99, 3.00],0.00,inplace=False)
+
+# df_final['q42_60'] = -99.99
+# for i in cols:
+#     df_final.loc[df_final[i] == 1.00,'q42_60'] = 1.00
+#     df_final.loc[df_final[i] == 2.00,'q42_60'] = 2.00
+#     df_final.drop(i,axis=1,inplace=True)
+
+# df_final = pandas.get_dummies(df_final, columns=['q42_60'])
+
+# df_temp  = df_final.copy()
+# cols = df_temp.filter(like='q43').columns.tolist()+df_temp.filter(like='q61').columns.tolist()
+# df_final[cols] = df_temp[cols].replace([-99.99, 3.00],0.00,inplace=False)
+
+# df_final['q43_61'] = -99.99
+# for i in cols:
+#     df_final.loc[df_final[i] == 1.00,'q43_61'] = 1.00
+#     df_final.loc[df_final[i] == 2.00,'q43_61'] = 2.00
+#     df_final.drop(i,axis=1,inplace=True)
+
+# df_final = pandas.get_dummies(df_final, columns=['q43_61'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q78b'])
+
+# df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q78c').columns.tolist())
+
+# df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q81').columns.tolist())
+
+# df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='q84_').columns.tolist())
+
+# df_final = pandas.get_dummies(df_final, columns=['q85'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q111112'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q113'])
+
+# df_final = pandas.get_dummies(df_final, columns=df_final.filter(like='qbb').columns.tolist())
+
+# df_final['q115_116']  = -99.99
+# df_final.loc[df_final['q115'] == 3.00,'q115_116'] = 0.00
+# df_final.loc[df_final['q116_p'] == 1.00,'q115_116'] = 1.00
+# df_final.loc[df_final['q116_p'] == 2.00,'q115_116'] = 2.00
+# df_final.loc[df_final['q116_p'] == 3.00,'q115_116'] = 3.00
+# df_final.loc[df_final['q116_p'] == 4.00,'q115_116'] = 4.00
+# df_final.loc[df_final['q116_p'] == 5.00,'q115_116'] = 5.00
+# df_final.loc[df_final['q116_l'] == 1.00,'q115_116'] = -1.00
+# df_final.loc[df_final['q116_l'] == 2.00,'q115_116'] = -2.00
+# df_final.loc[df_final['q116_l'] == 3.00,'q115_116'] = -3.00
+# df_final.loc[df_final['q116_l'] == 4.00,'q115_116'] = -4.00
+# df_final.loc[df_final['q116_l'] == 5.00,'q115_116'] = -5.00
+
+# df_final = pandas.get_dummies(df_final, columns=['q115_116'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q117'])
+
+# df_final = pandas.get_dummies(df_final, columns=['q119'])
 
 # save the dataframe as a csv file
 df_final.to_csv('./sme_finance_monitor_final.csv')
