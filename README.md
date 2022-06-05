@@ -108,6 +108,14 @@ Finally, we are attempting to do some preliminary experiments and show some init
 
 As we can see, given the high proportion of missing values, any technique to impute them will most likely result in inaccurate results.
 
+### Fairness Through  Unawareness
+
+We simply remove these sensitive  attributes, thus the classifier is unaware of the sense of attributes directly.
+
+
+
+Even though the sensitive attributes were removed, classifiers are still failed to be unbiased against the certain races.
+
 ## Next Steps
 
 1. We have completed some preliminary experiments in terms of data imputation methods, which negatively affect the prediction accuracy in our ***DEFAULT*** classification task. However, ***fairness*** concerning sensitive attributes, e.g., gender and ethnic background, has not been involved yet. Therefore, we will carry out the fairness comparison by computing fairness criteria.

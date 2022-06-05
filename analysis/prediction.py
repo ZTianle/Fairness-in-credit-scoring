@@ -199,12 +199,14 @@ if __name__=="__main__":
 
     print(X['q144_new'].value_counts())
 
+
      # KNN imputer
     # imputer = SimpleImputer(strategy="most_frequent")
     imputer = SimpleImputer(strategy="constant", fill_value=0)
     # imputer = IterativeImputer(IterativeImputer(estimator=RandomForestRegressor(random_state=0), max_iter=5))
     # imputer = KNNImputer(n_neighbors=5, weights="uniform")
     X_new = imputer.fit_transform(X, y)
+
     print(X['q144_new'])
     print(X_new[:,-1])
     # X = pandas.get_dummies(X, columns=['q144_new'])
