@@ -38,23 +38,23 @@ Firstly, we completed some data cleaning tasks on both the training and test set
 
 Interestingly, Fig. 1 shows the final outcome for the owners' gender. As we can see, female owners have a more chance of securing a financial product, while male owners would be more pessimistic about their main bank treating them fairly.
 
-![gender](./fig/gender.jpg)
+<img src="./fig/gender.jpg" alt="gender" style="zoom:30%;" />
 
 <center>Fig. 1. The final outcome with respect to the gender of the business owner.</center>
 
-![gender_trust](./fig/gender_trust.jpg)
+<img src="./fig/gender_trust.jpg" alt="gender_trust" style="zoom:30%;" />
 
 <center>Fig. 2. To what extent, trust the MAIN BANK to treat them fairly.</center>
 
 On the other hand, when considering the ethnic background, we divide the background category into five classes, i.e., white background, Asian background, black background, and mixed background. Loan applications with a black background have the highest probability of default, while businesses with white backgrounds are the most likely to secure financial products successfully in Fig. 3. Besides, the other backgrounds have an equal chance of loans. Similarly, the owners with the black background gave the least score on the treatment of their MAIN BANK in Fig. 4.
 
-![ethnic](./fig/ethnic.jpg)
+<img src="./fig/ethnic.jpg" alt="ethnic" style="zoom:46%;" />
 
 <center>Fig. 3. The final outcome with respect to the ethnic background of the business owner.</center>
 
 
 
-![ethnic](./fig/ethnic_trust.jpg)
+<img src="./fig/ethnic_trust.jpg" alt="ethnic" style="zoom:46%;" />
 
 <center>Fig. 4. To what extent, trust the MAIN BANK to treat them fairly.</center>
 
@@ -99,12 +99,13 @@ Finally, we updated the predictability of each variable in the variable list.xls
 
 ## Preliminary Experiments
 
-Finally, we are attempting to do some preliminary experiments and show some initial results when we do several crude imputations of missing values. We fit a `LOGISTIC` regression model on our training set and evaluate it using k-fold cross-validation. 
+Finally, we are attempting to do some preliminary experiments and show some initial results when we do several imputation methods of missing values. We fit a `LOGISTIC` regression model on our training set and evaluate it using k-fold cross-validation. 
 
 1. Imputing the data using ***Most Frequent Imputation***: our AUROC on the test set comes out to *0.9408* with a Gini of *0.8815*.
 2. Imputing the data using ***Median Imputation***: our AUROC on the test set comes out to *0.9405* with a Gini of *0.8810*.
 3. Imputing the data using ***Neighbours based Imputation***: our AUROC on the test set comes out to *0.8776* with a Gini of *0.7552*.
 4. Imputing the data using ***Iterative Imputation***. The final method of imputation is iterative imputation based on a regression model. The idea is to iterate over columns and create a new modelling task: predict this column given all the other columns. Furthermore, our AUROC and Gini are *0.8542* and *0.7082*, respectively.
+5. Except data imputation methods, we do a crude process, ***Missing Category*** method for missing values, which will treated as a separate category by itself. We create another category for the missing values and use them as a different level. Therefore, we obtain the performance of the classifier i.e., AUROC is *0.9632* and Gini is *0.9264*.
 
 As we can see, given the high proportion of missing values, any technique to impute them will most likely result in inaccurate results.
 
@@ -117,6 +118,8 @@ We simply remove these sensitive  attributes, thus the classifier is unaware of 
 <center>Fig. 5. Classifiers' accuracy w.r.t. the ethnic background of the business owner over four inputation methods.</center>
 
 Even though the sensitive attributes were removed, classifiers are still failed to be unbiased against the certain races. As we can see, different imputation methods affect the fairness of classifiers in Fig. 5. 
+
+<img src="./fig/ethnic_default.jpg" alt="ethnic_default" style="zoom:40%;" />
 
 ## Next Steps
 
