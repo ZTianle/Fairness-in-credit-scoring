@@ -112,9 +112,11 @@ As we can see, given the high proportion of missing values, any technique to imp
 
 We simply remove these sensitive  attributes, thus the classifier is unaware of the sense of attributes directly.
 
+<img src="./fig/ethnic_imputation.jpg" alt="ethnic_imputation" style="zoom:40%;" />
 
+<center>Fig. 5. Classifiers' accuracy w.r.t. the ethnic background of the business owner over four inputation methods.</center>
 
-Even though the sensitive attributes were removed, classifiers are still failed to be unbiased against the certain races.
+Even though the sensitive attributes were removed, classifiers are still failed to be unbiased against the certain races. As we can see, different imputation methods affect the fairness of classifiers in Fig. 5. 
 
 ## Next Steps
 
