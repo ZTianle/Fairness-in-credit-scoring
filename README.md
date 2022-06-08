@@ -6,9 +6,9 @@ We used the latest questionnaire data, downloaded from a public UK data service,
 
 ### Identify Target Variable
 
-Based on the understanding of the data, our target variable would be a new crafted variable `outcome`, as results are saved as different variables in terms of different financial products.
+Based on the understanding of the data, our target variable would be a new crafted variable `outcome`, as results are saved as different variables in terms of different financial products. The variable `outcome` incorporate the final results of all financial products, including overdraft and loan.
 
-Additionally, we have the following loan status values:
+Additionally, we have the following application status values:
 
 1. You were offered the facility you wanted and took it
 2. You took the (PRODUCT) after issues, for example with the terms and conditions or the amount offered
