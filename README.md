@@ -133,5 +133,6 @@ Even though the sensitive attribute was removed, classifiers still failed to be 
 
    (2) We can generate a new loss function based on counterfactual fairness, which means that the predictor is counterfactual fair for individuals if predictions in real world scenario and in counterfactual scenario are the same. Specifically, we can construct a optimisation objective that is minimising the prediction discrimination of the sensitive attribute. Finally, our goal will be to learn a classifier to optimise three main objectives, the classification accuracy, common fairness loss and prediction discrimination of unlabelled data.
 
-3. We may consider another attribute, i.e., risk, as our target label instead of the final outcome, with only 3936 missing values out of 45,018 surveys. 
+3. We may consider another attribute, i.e., `risk ratings` with four levels (i.e., minimal, low, average and above average), as our target label instead of the final outcome, with only 3936 missing values out of 45,018 surveys. Of course, we are able to easily transfer the above procedures to this classification task with four-class output.
 
+   <img src="./fig/risk.jpg" alt="risk" style="zoom:40%;" />
