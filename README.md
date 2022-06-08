@@ -101,28 +101,37 @@ Finally, we updated the predictability of each variable in the variable list.xls
 
 Finally, we are attempting to do some preliminary experiments and show some initial results when we do several imputation methods of missing values. We fit a `LOGISTIC` regression model on our training set and evaluate it using k-fold cross-validation. 
 
-1. Imputing the data using ***Most Frequent Imputation***: our AUROC on the test set comes out to *0.9408* with a Gini of *0.8815*.
-2. Imputing the data using ***Median Imputation***: our AUROC on the test set comes out to *0.9405* with a Gini of *0.8810*.
-3. Imputing the data using ***Neighbours based Imputation***: our AUROC on the test set comes out to *0.8776* with a Gini of *0.7552*.
-4. Imputing the data using ***Iterative Imputation***. The final method of imputation is iterative imputation based on a regression model. The idea is to iterate over columns and create a new modelling task: predict this column given all the other columns. Furthermore, our AUROC and Gini are *0.8542* and *0.7082*, respectively.
-5. Except data imputation methods, we do a crude process, ***Missing Category*** method for missing values, which will treated as a separate category by itself. We create another category for the missing values and use them as a different level. Therefore, we obtain the performance of the classifier i.e., AUROC is *0.9632* and Gini is *0.9264*.
+1. Imputing the data using ***Most Frequent Imputation***: our AUROC on the test set comes out to **0.9408** with a Gini of **0.8815**.
+2. Imputing the data using ***Median Imputation***: our AUROC on the test set comes out to **0.9405** with a Gini of **0.8810**.
+3. Imputing the data using ***Neighbours based Imputation***: our AUROC on the test set comes out to **0.8776** with a Gini of **0.7552**.
+4. Imputing the data using ***Iterative Imputation***. The final method of imputation is iterative imputation based on a regression model. The idea is to iterate over columns and create a new modelling task: predict this column given all the other columns. Furthermore, our AUROC and Gini are **0.8542** and **0.7082**, respectively.
+5. Except data imputation methods, we do a crude process, ***Missing Category*** method for missing values, which will treated as a separate category by itself. We create another category for the missing values and use them as a different level. Therefore, we obtain the performance of the classifier i.e., AUROC is **0.9632** and Gini is **0.9264**.
 
 As we can see, given the high proportion of missing values, any technique to impute them will most likely result in inaccurate results.
 
 ### Fairness Through  Unawareness
 
-We simply remove these sensitive  attributes, thus the classifier is unaware of the sense of attributes directly.
+Simply remove these sensitive attributes, thus the classifier is unaware of the sense of attributes directly.
 
 <img src="./fig/ethnic_imputation.jpg" alt="ethnic_imputation" style="zoom:40%;" />
 
-<center>Fig. 5. Classifiers' accuracy w.r.t. the ethnic background of the business owner over four inputation methods.</center>
+<center>Fig. 5. Classifiers' accuracy w.r.t. the ethnic background of the business owner over five missing value treatments.</center>
 
-Even though the sensitive attributes were removed, classifiers are still failed to be unbiased against the certain races. As we can see, different imputation methods affect the fairness of classifiers in Fig. 5. 
+Even though the sensitive attribute was removed, classifiers still failed to be unbiased against certain races. As we can see, different methods for dealing with missing values affect the performance of classifiers of different races in Fig. 5; the default rate of businesses with non-white backgrounds is higher than those with white backgrounds in the test set over all predictors with different missing value treatments in Fig. 6. Therefore, we have concerns about non-white races for SME data since all predictors have demonstrated poor performance and higher default rates for those businesses with non-white backgrounds.
 
 <img src="./fig/ethnic_default.jpg" alt="ethnic_default" style="zoom:40%;" />
 
+<center>Fig. 6. Default rates of different ethnic backgrounds of business owners in the testing set.</center>
+
 ## Next Steps
 
-1. We have completed some preliminary experiments in terms of data imputation methods, which negatively affect the prediction accuracy in our ***DEFAULT*** classification task. However, ***fairness*** concerning sensitive attributes, e.g., gender and ethnic background, has not been involved yet. Therefore, we will carry out the fairness comparison by computing fairness criteria.
-2. The raw data includes over 45,018 surveys, but there are only 2,262 surveys that provided their final outcome regarding their overdraft or loan. Besides, a pretty limited number of data samples have ***ethnic minority backgrounds*** among the 2,262 samples, which might not be convincing. Next, we may consider another attribute, i.e., risk, as our target label instead of the final outcome, with only 3936 missing values out of 45,018 surveys.
+1. We have completed some preliminary experiments in terms of data imputation methods, which negatively affect the prediction accuracy in our ***DEFAULT*** classification task. And we have enough evidence to concern SME, owners of which have non-white background, due to worse prediction accuracy, higher default rate as well.  
+
+2. The raw data includes over 45,018 surveys, but there are only 2,262 surveys that provided their final outcome regarding their overdraft or loan. Besides, a pretty limited number of data samples have ***ethnic minority backgrounds*** among the 2,262 samples, which might not be convincing. So, we need to think about how to utilise the other data to improve fairness of predictors. I have the following potential solutions,
+
+   (1) Intuitively, we can make the most of unlabelled data using semi-supervised learning, that is, generating pseudo labels to predict labels for unlabelled data to obtain new training datasets. Then, we can do traditional fair machine learning on this augmented dataset.
+
+   (2) We can generate a new loss function based on counterfactual fairness, which means that the predictor is counterfactual fair for individuals if predictions in real world scenario and in counterfactual scenario are the same. Specifically, we can construct a optimisation objective that is minimising the prediction discrimination of the sensitive attribute. Finally, our goal will be to learn a classifier to optimise three main objectives, the classification accuracy, common fairness loss and prediction discrimination of unlabelled data.
+
+3. We may consider another attribute, i.e., risk, as our target label instead of the final outcome, with only 3936 missing values out of 45,018 surveys. 
 
